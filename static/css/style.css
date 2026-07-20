@@ -311,4 +311,5 @@ a:hover { color: var(--teal-900); }
   .login-visual { display: none; }
   .sidebar { position: fixed; left: -260px; z-index: 40; transition: left 0.2s ease; }
   .sidebar.open { left: 0; }
+  #burger { display: flex !important; align-items: center; justify-content: center; width: 34px; height: 34px; }
 }
