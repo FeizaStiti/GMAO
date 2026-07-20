@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}Tableau de bord — GMAO Biomédicale{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px;">
+  <div>
+    <div class="eyebrow">VUE D'ENSEMBLE</div>
+    <h1 style="margin-top:6px;">Tableau de bord</h1>
+  </div>
+  <a href="{% url 'echographe_create' %}" class="btn-brand">+ Ajouter un échographe</a>
+</div>
+
+<!-- KPI -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px;">
+  <div class="card-kpi">
+    <div class="kpi-value">{{ total_echographes }}</div>
+    <div class="kpi-label">Échographes suivis</div>
+  </div>
+  <div class="card-kpi">
+    <div class="kpi-value" style="color:{% if pannes_en_cours %}var(--red){% endif %};">{{ pannes_en_cours }}</div>
+    <div class="kpi-label">Pannes en cours {% if pannes_urgentes %}· {{ pannes_urgentes }} urgente(s){% endif %}</div>
+  </div>
+  <div class="card-kpi">
+    <div class="kpi-value">{{ total_services }}</div>
+    <div class="kpi-label">Services équipés</div>
+  </div>
+  <div class="card-kpi">
+    <div class="kpi-value" style="color:{% if pieces_en_alerte %}var(--amber){% endif %};">{{ pieces_en_alerte|length }}</div>
+    <div class="kpi-label">Pièces sous seuil d'alerte</div>
+  </div>
+  <div class="card-kpi">
+    <div class="kpi-value">{{ total_membres }}</div>
+    <div class="kpi-label">Membres de l'équipe</div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1.4fr 1fr;gap:20px;align-items:start;">
+  <!-- Colonne principale -->
+  <div style="display:flex;flex-direction:column;gap:20px;">
+
+    <div class="panel">
+      <div class="panel-title">Maintenances planifiées (30 prochains jours)</div>
+      {% if maintenances_a_venir %}
+      <table class="table-clean">
+        <thead><tr><th>Échographe</th><th>Type</th><th>Date prévue</th><th>Technicien</th><th>Statut</th></tr></thead>
+        <tbody>
+          {% for m in maintenances_a_venir %}
+          <tr>
+            <td>{{ m.echographe }}</td>
+            <td>{{ m.get_type_maintenance_display }}</td>
+            <td>{{ m.date_prevue|date:"d/m/Y" }}</td>
+            <td>{{ m.technicien }}</td>
+            <td><span class="pill pill-teal">{{ m.get_statut_display }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p style="color:var(--muted);font-size:14px;">Aucune maintenance planifiée sur cette période.</p>
+      {% endif %}
+      <a href="{% url 'planification_list' %}" style="font-size:13px;display:inline-block;margin-top:10px;">Voir toutes les planifications →</a>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Dernières pannes déclarées</div>
+      {% if dernieres_pannes %}
+      <table class="table-clean">
+        <thead><tr><th>Équipement</th><th>Priorité</th><th>Statut</th><th>Déclarée le</th></tr></thead>
+        <tbody>
+          {% for p in dernieres_pannes %}
+          <tr>
+            <td>{{ p.equipement }}</td>
+            <td>
+              <span class="pill {% if p.priorite == 'urgente' %}pill-red{% elif p.priorite == 'haute' %}pill-amber{% else %}pill-muted{% endif %}">{{ p.get_priorite_display }}</span>
+            </td>
+            <td>
+              <span class="pill {% if p.statut == 'resolue' %}pill-green{% elif p.statut == 'en_cours' %}pill-amber{% else %}pill-red{% endif %}">{{ p.get_statut_display }}</span>
+            </td>
+            <td>{{ p.date_declaration|date:"d/m/Y H:i" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p style="color:var(--muted);font-size:14px;">Aucune panne enregistrée.</p>
+      {% endif %}
+      <a href="{% url 'panne_list' %}" style="font-size:13px;display:inline-block;margin-top:10px;">Voir toutes les pannes →</a>
+    </div>
+
+    {% if pieces_en_alerte %}
+    <div class="panel" style="border-left:4px solid var(--amber);">
+      <div class="panel-title">⚠️ Pièces de rechange sous seuil d'alerte</div>
+      <table class="table-clean">
+        <thead><tr><th>Pièce</th><th>Référence</th><th>Stock</th><th>Seuil</th></tr></thead>
+        <tbody>
+          {% for piece in pieces_en_alerte %}
+          <tr>
+            <td>{{ piece.nom }}</td>
+            <td style="font-family:var(--font-mono);font-size:12.5px;">{{ piece.reference }}</td>
+            <td><span class="pill pill-amber">{{ piece.quantite_stock }}</span></td>
+            <td>{{ piece.seuil_alerte }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <a href="{% url 'piece_list' %}" style="font-size:13px;display:inline-block;margin-top:10px;">Gérer le stock →</a>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Colonne latérale : activité / notifications -->
+  <div class="panel">
+    <div class="panel-title">Activité récente de l'équipe</div>
+    {% for n in notifications_feed %}
+    <div class="notif-item" style="padding-left:0;padding-right:0;">
+      <div class="notif-title">{{ n.titre }}</div>
+      <div class="notif-msg">{{ n.message }}</div>
+      <div class="notif-time">{{ n.date_creation|timesince }}</div>
+    </div>
+    {% empty %}
+    <p style="color:var(--muted);font-size:14px;">Aucune activité pour le moment.</p>
+    {% endfor %}
+    <a href="{% url 'notification_list' %}" style="font-size:13px;display:inline-block;margin-top:6px;">Historique complet →</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: gmao-biomedicale
+    env: python
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate"
+    startCommand: "gunicorn backend.wsgi:application"
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: PYTHON_VERSION
+        value: "3.12.0"
+      # Optionnel : décommentez si vous ajoutez une base PostgreSQL Render
+      # - key: DATABASE_URL
+      #   fromDatabase:
+      #     name: gmao-biomedicale-db
+      #     property: connectionString
+
+# Optionnel : base de données PostgreSQL managée par Render (recommandé en production,
+# car le disque SQLite n'est pas persistant entre les déploiements sur Render).
+# databases:
+#   - name: gmao-biomedicale-db
+#     plan: free

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Établissements — GMAO Biomédicale{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;">
+  <div><div class="eyebrow">ORGANISATION</div><h1 style="margin-top:6px;">Établissements</h1></div>
+  <a href="{% url 'etablissement_create' %}" class="btn-brand">+ Ajouter un établissement</a>
+</div>
+
+<div class="panel">
+  <table class="table-clean">
+    <thead><tr><th>Nom</th><th>Adresse</th><th>Téléphone</th><th>Services</th><th></th></tr></thead>
+    <tbody>
+      {% for e in objets %}
+      <tr>
+        <td>{{ e.nom }}</td>
+        <td>{{ e.adresse|truncatechars:40 }}</td>
+        <td>{{ e.telephone }}</td>
+        <td>{{ e.services.count }}</td>
+        <td style="text-align:right;">
+          <a href="{% url 'etablissement_update' e.pk %}" class="btn-outline-brand" style="padding:5px 12px;font-size:12.5px;">Modifier</a>
+          <a href="{% url 'etablissement_delete' e.pk %}" style="color:var(--red);font-size:12.5px;margin-left:10px;">Supprimer</a>
+        </td>
+      </tr>
+      {% empty %}<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px;">Aucun établissement enregistré.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

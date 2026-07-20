@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Notifications — GMAO Biomédicale{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;">
+  <div><div class="eyebrow">ACTIVITÉ DE L'ÉQUIPE</div><h1 style="margin-top:6px;">Notifications</h1></div>
+  <a href="{% url 'notifications_tout_marquer' %}" class="btn-outline-brand">Tout marquer comme lu</a>
+</div>
+
+<div class="panel" style="padding:0;">
+  {% for n in notifications %}
+  <a href="{% url 'notification_lue' n.pk %}" class="notif-item {% if request.user not in n.lu_par.all %}unread{% endif %}" style="padding:16px 20px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <div>
+        <span class="pill pill-teal" style="margin-right:8px;">{{ n.get_type_notification_display }}</span>
+        <span class="notif-title">{{ n.titre }}</span>
+      </div>
+      <div class="notif-time">{{ n.date_creation|date:"d/m/Y H:i" }}</div>
+    </div>
+    <div class="notif-msg" style="margin-top:6px;">{{ n.message }}</div>
+    {% if n.auteur %}<div class="notif-time" style="margin-top:6px;">Par {{ n.auteur.get_full_name|default:n.auteur.username }}</div>{% endif %}
+  </a>
+  {% empty %}
+  <div style="padding:40px;text-align:center;color:var(--muted);">Aucune notification pour le moment.</div>
+  {% endfor %}
+</div>
+
+{% if is_paginated %}
+<div style="margin-top:16px;display:flex;gap:8px;">
+  {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}" class="btn-outline-brand">← Précédent</a>{% endif %}
+  <span style="align-self:center;font-size:13px;color:var(--muted);">Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}" class="btn-outline-brand">Suivant →</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

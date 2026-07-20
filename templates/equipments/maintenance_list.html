@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Maintenances — GMAO Biomédicale{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;">
+  <div><div class="eyebrow">INTERVENTIONS</div><h1 style="margin-top:6px;">Maintenances</h1></div>
+  <a href="{% url 'maintenance_create' %}" class="btn-brand">+ Nouvelle maintenance</a>
+</div>
+
+<div class="panel">
+  <table class="table-clean">
+    <thead><tr><th>Échographe</th><th>Type</th><th>Date</th><th>Technicien</th><th>Temps d'arrêt</th><th></th></tr></thead>
+    <tbody>
+      {% for m in objets %}
+      <tr>
+        <td>{{ m.echographe }}</td>
+        <td><span class="pill pill-teal">{{ m.get_type_maintenance_display }}</span></td>
+        <td>{{ m.date_intervention|date:"d/m/Y" }}</td>
+        <td>{{ m.technicien }}</td>
+        <td>{{ m.temps_arret }} h</td>
+        <td style="text-align:right;">
+          <a href="{% url 'maintenance_update' m.pk %}" class="btn-outline-brand" style="padding:5px 12px;font-size:12.5px;">Modifier</a>
+        </td>
+      </tr>
+      {% empty %}<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px;">Aucune maintenance enregistrée.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

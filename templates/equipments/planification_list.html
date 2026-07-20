@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Planifications — GMAO Biomédicale{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;">
+  <div><div class="eyebrow">CALENDRIER</div><h1 style="margin-top:6px;">Planifications de maintenance</h1></div>
+  <a href="{% url 'planification_create' %}" class="btn-brand">+ Planifier une maintenance</a>
+</div>
+
+<div class="panel">
+  <table class="table-clean">
+    <thead><tr><th>Échographe</th><th>Type</th><th>Date prévue</th><th>Technicien</th><th>Statut</th><th></th></tr></thead>
+    <tbody>
+      {% for p in objets %}
+      <tr>
+        <td>{{ p.echographe }}</td>
+        <td>{{ p.get_type_maintenance_display }}</td>
+        <td>{{ p.date_prevue|date:"d/m/Y" }}</td>
+        <td>{{ p.technicien }}</td>
+        <td>
+          <span class="pill {% if p.statut == 'terminee' %}pill-green{% elif p.statut == 'annulee' %}pill-muted{% elif p.statut == 'en_cours' %}pill-amber{% else %}pill-teal{% endif %}">{{ p.get_statut_display }}</span>
+        </td>
+        <td style="text-align:right;">
+          <a href="{% url 'planification_update' p.pk %}" class="btn-outline-brand" style="padding:5px 12px;font-size:12.5px;">Modifier</a>
+        </td>
+      </tr>
+      {% empty %}<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px;">Aucune planification.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

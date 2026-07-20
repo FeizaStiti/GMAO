@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Connexion — GMAO Biomédicale{% endblock %}
+
+{% block content_public %}
+<div class="login-wrap">
+  <div class="login-visual">
+    <div class="eyebrow" style="color:#86B3AF;">GMAO BIOMÉDICALE</div>
+    <h1 class="display" style="color:#fff;font-size:38px;max-width:420px;margin-top:14px;">
+      Le suivi de vos équipements, sans angle mort.
+    </h1>
+    <p style="color:#9FC3BF;max-width:380px;margin-top:14px;font-size:15px;line-height:1.6;">
+      Échographes, maintenances, pannes et stock de pièces détachées —
+      toute l'équipe est alertée en temps réel à chaque nouveauté.
+    </p>
+    <div style="margin-top:40px;display:flex;gap:28px;">
+      <div>
+        <div style="font-family:var(--font-display);font-size:24px;color:#fff;">100%</div>
+        <div style="font-size:12px;color:#86B3AF;">Traçabilité</div>
+      </div>
+      <div>
+        <div style="font-family:var(--font-display);font-size:24px;color:#fff;">Temps réel</div>
+        <div style="font-size:12px;color:#86B3AF;">Alertes équipe</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="login-form-side">
+    <div class="login-card">
+      <div class="eyebrow">ACCÈS SÉCURISÉ</div>
+      <h2 style="margin:8px 0 24px;">Connexion</h2>
+
+      {% if form.errors %}
+        <div style="background:var(--red-soft);color:var(--red);padding:10px 14px;border-radius:8px;font-size:13.5px;margin-bottom:16px;">
+          Nom d'utilisateur ou mot de passe incorrect.
+        </div>
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+        <div style="margin-bottom:16px;">
+          <label for="id_username">Nom d'utilisateur</label>
+          {{ form.username }}
+        </div>
+        <div style="margin-bottom:22px;">
+          <label for="id_password">Mot de passe</label>
+          {{ form.password }}
+        </div>
+        <input type="hidden" name="next" value="{{ next }}">
+        <button type="submit" class="btn-brand" style="width:100%;padding:11px;font-size:14.5px;">Se connecter</button>
+      </form>
+      <p style="margin-top:20px;font-size:12px;color:var(--muted);">
+        Accès réservé au personnel technique et biomédical autorisé.
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

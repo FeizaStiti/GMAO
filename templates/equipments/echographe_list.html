@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Échographes — GMAO Biomédicale{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;">
+  <div>
+    <div class="eyebrow">PARC MATÉRIEL</div>
+    <h1 style="margin-top:6px;">Échographes</h1>
+  </div>
+  <a href="{% url 'echographe_create' %}" class="btn-brand">+ Ajouter un échographe</a>
+</div>
+
+<form method="get" style="margin-bottom:18px;max-width:360px;">
+  <input type="text" name="q" value="{{ q }}" placeholder="Rechercher (n° série, marque, modèle)..." class="form-control">
+</form>
+
+<div class="panel">
+  <table class="table-clean">
+    <thead>
+      <tr><th>N° série</th><th>Marque / Modèle</th><th>Service</th><th>Installation</th><th>Prochaine maintenance</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for e in objets %}
+      <tr>
+        <td style="font-family:var(--font-mono);font-size:12.5px;">{{ e.numero_serie }}</td>
+        <td>{{ e.marque }} {{ e.modele }}</td>
+        <td>{{ e.service }}</td>
+        <td>{{ e.date_installation|date:"d/m/Y"|default:"—" }}</td>
+        <td>{{ e.prochaine_maintenance|date:"d/m/Y"|default:"—" }}</td>
+        <td style="text-align:right;">
+          <a href="{% url 'echographe_detail' e.pk %}" class="btn-outline-brand" style="padding:5px 12px;font-size:12.5px;">Détails</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px;">Aucun échographe enregistré.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if is_paginated %}
+<div style="margin-top:16px;display:flex;gap:8px;">
+  {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&q={{ q }}" class="btn-outline-brand">← Précédent</a>{% endif %}
+  <span style="align-self:center;font-size:13px;color:var(--muted);">Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&q={{ q }}" class="btn-outline-brand">Suivant →</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

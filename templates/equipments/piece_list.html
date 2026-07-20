@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Pièces de rechange — GMAO Biomédicale{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;">
+  <div><div class="eyebrow">STOCK</div><h1 style="margin-top:6px;">Pièces de rechange</h1></div>
+  <div style="display:flex;gap:10px;">
+    <a href="{% url 'mouvement_create' %}" class="btn-outline-brand">+ Mouvement de stock</a>
+    <a href="{% url 'piece_create' %}" class="btn-brand">+ Ajouter une pièce</a>
+  </div>
+</div>
+
+<div class="panel">
+  <table class="table-clean">
+    <thead><tr><th>Pièce</th><th>Référence</th><th>Stock</th><th>Seuil d'alerte</th><th>Fournisseur</th><th></th></tr></thead>
+    <tbody>
+      {% for p in objets %}
+      <tr>
+        <td>{{ p.nom }}</td>
+        <td style="font-family:var(--font-mono);font-size:12.5px;">{{ p.reference }}</td>
+        <td><span class="pill {% if p.en_alerte %}pill-amber{% else %}pill-green{% endif %}">{{ p.quantite_stock }}</span></td>
+        <td>{{ p.seuil_alerte }}</td>
+        <td>{{ p.fournisseur|default:"—" }}</td>
+        <td style="text-align:right;">
+          <a href="{% url 'piece_update' p.pk %}" class="btn-outline-brand" style="padding:5px 12px;font-size:12.5px;">Modifier</a>
+        </td>
+      </tr>
+      {% empty %}<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px;">Aucune pièce enregistrée.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Pannes — GMAO Biomédicale{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;">
+  <div><div class="eyebrow">SUIVI DES INCIDENTS</div><h1 style="margin-top:6px;">Pannes</h1></div>
+  <a href="{% url 'panne_create' %}" class="btn-brand">+ Déclarer une panne</a>
+</div>
+
+<div class="panel">
+  <table class="table-clean">
+    <thead><tr><th>Équipement</th><th>Description</th><th>Priorité</th><th>Statut</th><th>Technicien</th><th>Déclarée le</th><th></th></tr></thead>
+    <tbody>
+      {% for p in objets %}
+      <tr>
+        <td>{{ p.equipement }}</td>
+        <td>{{ p.description|truncatechars:50 }}</td>
+        <td><span class="pill {% if p.priorite == 'urgente' %}pill-red{% elif p.priorite == 'haute' %}pill-amber{% else %}pill-muted{% endif %}">{{ p.get_priorite_display }}</span></td>
+        <td><span class="pill {% if p.statut == 'resolue' %}pill-green{% elif p.statut == 'en_cours' %}pill-amber{% else %}pill-red{% endif %}">{{ p.get_statut_display }}</span></td>
+        <td>{{ p.technicien|default:"Non assigné" }}</td>
+        <td>{{ p.date_declaration|date:"d/m/Y H:i" }}</td>
+        <td style="text-align:right;">
+          <a href="{% url 'panne_update' p.pk %}" class="btn-outline-brand" style="padding:5px 12px;font-size:12.5px;">Modifier</a>
+        </td>
+      </tr>
+      {% empty %}<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px;">Aucune panne enregistrée.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
