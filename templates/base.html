@@ -21,6 +21,11 @@
       🔔 Notifications
       {% if notifications_non_lues_count %}<span class="badge-count">{{ notifications_non_lues_count }}</span>{% endif %}
     </a>
+    <a href="{% url 'suggestion_list' %}" class="nav-link {% if request.resolver_match.url_name == 'suggestion_list' %}active{% endif %}">
+      💡 Suggestions
+      {% if suggestions_non_traitees_count %}<span class="badge-count">{{ suggestions_non_traitees_count }}</span>{% endif %}
+    </a>
+    <a href="{% url 'qr_scan' %}" class="nav-link {% if request.resolver_match.url_name == 'qr_scan' %}active{% endif %}">📷 Scanner QR</a>
 
     <div class="nav-section-label">Équipements</div>
     <a href="{% url 'echographe_list' %}" class="nav-link {% if 'echographe' in request.resolver_match.url_name %}active{% endif %}">🖥️ Échographes</a>

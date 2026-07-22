@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import (
     Echographe, Etablissement, Fournisseur, Maintenance, MouvementStock,
     Notification, Panne, PieceRechange, PlanificationMaintenance, QRImport,
-    Service,
+    Service, Suggestion,
 )
 
 
@@ -73,4 +73,11 @@ class QRImportAdmin(admin.ModelAdmin):
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ('titre', 'type_notification', 'auteur', 'date_creation')
     list_filter = ('type_notification',)
+    search_fields = ('titre', 'message')
+
+
+@admin.register(Suggestion)
+class SuggestionAdmin(admin.ModelAdmin):
+    list_display = ('titre', 'type_suggestion', 'traitee', 'date_creation', 'traitee_par')
+    list_filter = ('type_suggestion', 'traitee')
     search_fields = ('titre', 'message')

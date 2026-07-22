@@ -8,12 +8,12 @@
     <h1 style="margin-top:6px;">{{ objet.marque }} {{ objet.modele }}</h1>
   </div>
   <div style="display:flex;gap:10px;">
-    <a href="{% url 'echographe_update' objet.pk %}" class="btn-outline-brand">Modifier</a>
-    <a href="{% url 'echographe_delete' objet.pk %}" class="btn-outline-brand" style="color:var(--red);border-color:var(--red);">Supprimer</a>
+    {% if user_peut_modifier %}<a href="{% url 'echographe_update' objet.pk %}" class="btn-outline-brand">Modifier</a>{% endif %}
+    {% if user_peut_supprimer %}<a href="{% url 'echographe_delete' objet.pk %}" class="btn-outline-brand" style="color:var(--red);border-color:var(--red);">Supprimer</a>{% endif %}
   </div>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:20px;">
   <div class="panel">
     <div class="panel-title">Informations générales</div>
     <table class="table-clean">
@@ -33,6 +33,15 @@
       <img src="{{ objet.photo.url }}" style="width:100%;border-radius:8px;">
     {% else %}
       <p style="color:var(--muted);font-size:14px;">Aucune photo disponible.</p>
+    {% endif %}
+  </div>
+  <div class="panel">
+    <div class="panel-title">QR code de traçabilité</div>
+    {% if objet.qr_code %}
+      <img src="{{ objet.qr_code.url }}" style="width:100%;max-width:200px;border-radius:8px;display:block;margin:0 auto;">
+      <p style="color:var(--muted);font-size:12.5px;text-align:center;margin-top:10px;">Scannez ce code pour retrouver cette fiche via « Scanner QR ».</p>
+    {% else %}
+      <p style="color:var(--muted);font-size:14px;">QR code non généré pour cet équipement.</p>
     {% endif %}
   </div>
 </div>

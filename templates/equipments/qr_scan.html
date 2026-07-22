@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Scanner un QR code — GMAO Biomédicale{% endblock %}
+
+{% block content %}
+<div class="eyebrow">RECHERCHE PAR QR CODE</div>
+<h1 style="margin:6px 0 20px;">Scanner un équipement</h1>
+
+<div class="panel" style="max-width:640px;">
+  <p style="font-size:14px;color:var(--muted);margin-bottom:18px;">
+    Activez la caméra pour scanner directement le QR code de l'équipement, ou saisissez
+    manuellement son n° de série ci-dessous.
+  </p>
+
+  <div style="margin-bottom:20px;">
+    <button type="button" id="btn-toggle-camera" class="btn-brand">📷 Activer la caméra</button>
+    <div id="qr-reader" style="width:100%;max-width:420px;margin-top:16px;display:none;border-radius:10px;overflow:hidden;"></div>
+    <div id="qr-status" style="font-size:13px;color:var(--muted);margin-top:8px;"></div>
+  </div>
+
+  <form method="post" id="qr-form">
+    {% csrf_token %}
+    <div style="margin-bottom:16px;">
+      <label style="display:block;font-size:13px;font-weight:600;color:var(--teal-900);margin-bottom:6px;">
+        Contenu du QR code / N° de série *
+      </label>
+      <input type="text" name="contenu" id="qr-contenu" required class="form-control" placeholder="Ex : ECHO-2024-0031 ou https://.../echographes/12/">
+    </div>
+    <div style="display:flex;gap:10px;margin-top:20px;">
+      <button type="submit" class="btn-brand">Rechercher l'équipement</button>
+      <a href="{% url 'echographe_list' %}" class="btn-outline-brand">Voir la liste des échographes</a>
+    </div>
+  </form>
+</div>
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+(function () {
+  var toggleBtn = document.getElementById('btn-toggle-camera');
+  var readerDiv = document.getElementById('qr-reader');
+  var statusDiv = document.getElementById('qr-status');
+  var input = document.getElementById('qr-contenu');
+  var form = document.getElementById('qr-form');
+  var html5QrCode = null;
+  var running = false;
+
+  function stopCamera() {
+    if (html5QrCode && running) {
+      html5QrCode.stop().then(function () {
+        html5QrCode.clear();
+        readerDiv.style.display = 'none';
+        toggleBtn.textContent = '📷 Activer la caméra';
+        running = false;
+      }).catch(function () {
+        running = false;
+      });
+    }
+  }
+
+  function onScanSuccess(decodedText) {
+    statusDiv.textContent = '✅ QR code détecté, recherche en cours…';
+    input.value = decodedText;
+    stopCamera();
+    form.submit();
+  }
+
+  toggleBtn.addEventListener('click', function () {
+    if (running) {
+      stopCamera();
+      return;
+    }
+    if (typeof Html5Qrcode === 'undefined') {
+      statusDiv.textContent = "Impossible de charger le scanner. Vérifiez votre connexion internet, ou saisissez le code manuellement.";
+      return;
+    }
+    readerDiv.style.display = 'block';
+    toggleBtn.textContent = '⏹ Désactiver la caméra';
+    statusDiv.textContent = 'Autorisez l\'accès à la caméra si votre navigateur le demande…';
+
+    html5QrCode = new Html5Qrcode("qr-reader");
+    var config = { fps: 10, qrbox: { width: 240, height: 240 } };
+
+    html5QrCode.start(
+      { facingMode: "environment" },
+      config,
+      onScanSuccess
+    ).then(function () {
+      running = true;
+      statusDiv.textContent = 'Caméra active — visez le QR code de l\'équipement.';
+    }).catch(function (err) {
+      statusDiv.textContent = "Impossible d'accéder à la caméra (" + err + "). Vous pouvez saisir le code manuellement ci-dessous.";
+      readerDiv.style.display = 'none';
+      toggleBtn.textContent = '📷 Activer la caméra';
+    });
+  });
+
+  window.addEventListener('beforeunload', stopCamera);
+})();
+</script>
+{% endblock %}

@@ -7,7 +7,7 @@
     <div class="eyebrow">PARC MATÉRIEL</div>
     <h1 style="margin-top:6px;">Échographes</h1>
   </div>
-  <a href="{% url 'echographe_create' %}" class="btn-brand">+ Ajouter un échographe</a>
+  {% if user_peut_modifier %}<a href="{% url 'echographe_create' %}" class="btn-brand">+ Ajouter un échographe</a>{% endif %}
 </div>
 
 <form method="get" style="margin-bottom:18px;max-width:360px;">

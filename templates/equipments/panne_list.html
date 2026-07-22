@@ -4,7 +4,11 @@
 {% block content %}
 <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;">
   <div><div class="eyebrow">SUIVI DES INCIDENTS</div><h1 style="margin-top:6px;">Pannes</h1></div>
-  <a href="{% url 'panne_create' %}" class="btn-brand">+ Déclarer une panne</a>
+  <div style="display:flex;gap:10px;">
+    <a href="{% url 'export_pannes_pdf' %}" class="btn-outline-brand">⬇ Export PDF</a>
+    <a href="{% url 'export_pannes_excel' %}" class="btn-outline-brand">⬇ Export Excel</a>
+    {% if user_peut_modifier %}<a href="{% url 'panne_create' %}" class="btn-brand">+ Déclarer une panne</a>{% endif %}
+  </div>
 </div>
 
 <div class="panel">
@@ -20,7 +24,8 @@
         <td>{{ p.technicien|default:"Non assigné" }}</td>
         <td>{{ p.date_declaration|date:"d/m/Y H:i" }}</td>
         <td style="text-align:right;">
-          <a href="{% url 'panne_update' p.pk %}" class="btn-outline-brand" style="padding:5px 12px;font-size:12.5px;">Modifier</a>
+          {% if user_peut_modifier %}<a href="{% url 'panne_update' p.pk %}" class="btn-outline-brand" style="padding:5px 12px;font-size:12.5px;">Modifier</a>{% endif %}
+          {% if user_peut_supprimer %}<a href="{% url 'panne_delete' p.pk %}" style="color:var(--red);font-size:12.5px;margin-left:10px;">Supprimer</a>{% endif %}
         </td>
       </tr>
       {% empty %}<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px;">Aucune panne enregistrée.</td></tr>{% endfor %}

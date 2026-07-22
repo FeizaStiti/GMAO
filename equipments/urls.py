@@ -59,4 +59,17 @@ urlpatterns = [
     path('pieces/<int:pk>/modifier/', views.PieceRechangeUpdateView.as_view(), name='piece_update'),
     path('pieces/<int:pk>/supprimer/', views.PieceRechangeDeleteView.as_view(), name='piece_delete'),
     path('mouvements/ajouter/', views.MouvementStockCreateView.as_view(), name='mouvement_create'),
+
+    # Suggestions automatiques
+    path('suggestions/', views.SuggestionListView.as_view(), name='suggestion_list'),
+    path('suggestions/<int:pk>/traiter/', views.marquer_suggestion_vue, name='suggestion_traiter'),
+
+    # QR code
+    path('qr/scanner/', views.qr_scan_view, name='qr_scan'),
+
+    # Exports PDF / Excel
+    path('exports/maintenances.pdf', views.export_maintenances_pdf, name='export_maintenances_pdf'),
+    path('exports/maintenances.xlsx', views.export_maintenances_excel, name='export_maintenances_excel'),
+    path('exports/pannes.pdf', views.export_pannes_pdf, name='export_pannes_pdf'),
+    path('exports/pannes.xlsx', views.export_pannes_excel, name='export_pannes_excel'),
 ]

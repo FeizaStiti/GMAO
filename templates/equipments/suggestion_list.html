@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Suggestions — GMAO Biomédicale{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;">
+  <div>
+    <div class="eyebrow">MOTEUR DE SUGGESTIONS</div>
+    <h1 style="margin-top:6px;">Suggestions actives</h1>
+  </div>
+</div>
+
+<div class="panel" style="padding:0;">
+  {% for s in suggestions %}
+  <div class="notif-item unread" style="padding:16px 20px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <div>
+        <span class="pill {% if s.type_suggestion == 'panne_recurrente' %}pill-red{% elif s.type_suggestion == 'stock' %}pill-amber{% else %}pill-teal{% endif %}" style="margin-right:8px;">{{ s.get_type_suggestion_display }}</span>
+        <span class="notif-title">{{ s.titre }}</span>
+      </div>
+      <div class="notif-time">{{ s.date_creation|timesince }}</div>
+    </div>
+    <div class="notif-msg" style="margin-top:6px;">{{ s.message }}</div>
+    <div style="display:flex;gap:10px;margin-top:10px;">
+      {% if s.lien %}<a href="{{ s.lien }}" class="btn-outline-brand" style="padding:5px 12px;font-size:12.5px;">Voir</a>{% endif %}
+      <a href="{% url 'suggestion_traiter' s.pk %}" class="btn-outline-brand" style="padding:5px 12px;font-size:12.5px;">Marquer comme traitée</a>
+    </div>
+  </div>
+  {% empty %}
+  <div style="padding:40px;text-align:center;color:var(--muted);">Aucune suggestion active pour le moment. 🎉</div>
+  {% endfor %}
+</div>
+
+{% if is_paginated %}
+<div style="margin-top:16px;display:flex;gap:8px;">
+  {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}" class="btn-outline-brand">← Précédent</a>{% endif %}
+  <span style="align-self:center;font-size:13px;color:var(--muted);">Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}" class="btn-outline-brand">Suivant →</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

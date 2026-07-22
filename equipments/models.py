@@ -252,6 +252,47 @@ class QRImport(models.Model):
 
 
 # ==========================================================================
+#  SUGGESTIONS — recommandations automatiques du moteur de suggestions
+# ==========================================================================
+
+TYPE_SUGGESTION_CHOICES = [
+    ('stock', 'Réapprovisionnement de stock'),
+    ('maintenance', 'Planification de maintenance'),
+    ('panne_recurrente', 'Panne récurrente'),
+    ('technicien', "Affectation d'un technicien"),
+]
+
+
+class Suggestion(models.Model):
+    """
+    Recommandation générée automatiquement par le moteur de suggestions
+    après un enregistrement (stock bas, maintenance à prévoir, panne
+    récurrente, technicien fréquent sur un équipement, etc.).
+    `cle_unicite` évite de dupliquer plusieurs fois la même suggestion.
+    """
+    type_suggestion = models.CharField(max_length=30, choices=TYPE_SUGGESTION_CHOICES)
+    titre = models.CharField(max_length=200)
+    message = models.TextField()
+    lien = models.CharField(max_length=200, blank=True)
+    cle_unicite = models.CharField(max_length=200, unique=True)
+    date_creation = models.DateTimeField(auto_now_add=True)
+    traitee = models.BooleanField(default=False)
+    traitee_par = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='suggestions_traitees'
+    )
+    date_traitement = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-date_creation']
+        verbose_name = "Suggestion"
+        verbose_name_plural = "Suggestions"
+
+    def __str__(self):
+        return self.titre
+
+
+# ==========================================================================
 #  NOTIFICATIONS — alerte tous les membres à chaque nouveauté
 # ==========================================================================
 

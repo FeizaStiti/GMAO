@@ -106,6 +106,24 @@
       <a href="{% url 'piece_list' %}" style="font-size:13px;display:inline-block;margin-top:10px;">Gérer le stock →</a>
     </div>
     {% endif %}
+
+    {% if suggestions_actives %}
+    <div class="panel" style="border-left:4px solid var(--teal-600);">
+      <div class="panel-title">💡 Suggestions actives ({{ suggestions_actives_count }})</div>
+      {% for s in suggestions_actives %}
+      <div class="notif-item" style="padding-left:0;padding-right:0;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <span class="pill pill-teal" style="margin-right:8px;">{{ s.get_type_suggestion_display }}</span>
+            <span class="notif-title">{{ s.titre }}</span>
+          </div>
+        </div>
+        <div class="notif-msg" style="margin-top:6px;">{{ s.message }}</div>
+      </div>
+      {% endfor %}
+      <a href="{% url 'suggestion_list' %}" style="font-size:13px;display:inline-block;margin-top:10px;">Voir toutes les suggestions →</a>
+    </div>
+    {% endif %}
   </div>
 
   <!-- Colonne latérale : activité / notifications -->

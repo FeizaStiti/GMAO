@@ -4,7 +4,7 @@
 {% block content %}
 <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;">
   <div><div class="eyebrow">STOCK</div><h1 style="margin-top:6px;">Fournisseurs</h1></div>
-  <a href="{% url 'fournisseur_create' %}" class="btn-brand">+ Ajouter un fournisseur</a>
+  {% if user_peut_modifier %}<a href="{% url 'fournisseur_create' %}" class="btn-brand">+ Ajouter un fournisseur</a>{% endif %}
 </div>
 
 <div class="panel">
@@ -18,8 +18,8 @@
         <td>{{ f.email }}</td>
         <td>{{ f.pieces.count }}</td>
         <td style="text-align:right;">
-          <a href="{% url 'fournisseur_update' f.pk %}" class="btn-outline-brand" style="padding:5px 12px;font-size:12.5px;">Modifier</a>
-          <a href="{% url 'fournisseur_delete' f.pk %}" style="color:var(--red);font-size:12.5px;margin-left:10px;">Supprimer</a>
+          {% if user_peut_modifier %}<a href="{% url 'fournisseur_update' f.pk %}" class="btn-outline-brand" style="padding:5px 12px;font-size:12.5px;">Modifier</a>{% endif %}
+          {% if user_peut_supprimer %}<a href="{% url 'fournisseur_delete' f.pk %}" style="color:var(--red);font-size:12.5px;margin-left:10px;">Supprimer</a>{% endif %}
         </td>
       </tr>
       {% empty %}<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px;">Aucun fournisseur enregistré.</td></tr>{% endfor %}
